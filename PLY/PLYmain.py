@@ -27,10 +27,12 @@ def PLYcheck():
     for line in f.readlines():
         numline += 1
         parser.checkString(line)
-        if len(parser.dictstr) == 1 and parser.flag:
-            res.write(parser.strnum + ' : ' + str(parser.dictstr.popitem()[1]) + '\n')
+        if parser.in_dict and parser.flag:
+            # print(parser.strnum + ' : ' + str(len(parser.val_instr)))
+            res.write(parser.strnum + ' : ' + str(len(parser.val_instr)) + '\n')
         if numline % 10000 == 0:
             ftime.write(str(time.perf_counter() - time_start) + '\n')
+    print('***File was checked with PLY***')
     ftime.close()
     res.close()
     f.close()

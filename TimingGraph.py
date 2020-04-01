@@ -3,7 +3,7 @@ import matplotlib.ticker as plticker
 
 
 def printGraph():
-    plt.title('Timing of checking file for 100000 strings')
+    plt.title('Timing of checking file for 1mln strings')
     plt.xlabel('Num of strings')
     plt.ylabel('Time')
     timeREG = open('timeREG.txt', 'r')

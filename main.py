@@ -1,4 +1,4 @@
-from genSTRfile import FILEgenerator
+from genSTRfile import GENclass
 from checkREG import checkFILE
 from checkREG import checkREGstr
 from checkSMC import SMCcheck
@@ -19,7 +19,8 @@ while int(ch) != 0:
     ch = input()
     if ch.isdigit():
         if int(ch) == 1:
-            FILEgenerator()
+            gen = GENclass()
+            gen.FILEgenerator()
         elif int(ch) == 2:
             print('Write: ')
             strcheck = input()

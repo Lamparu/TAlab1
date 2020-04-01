@@ -1,7 +1,7 @@
 import re
 import time
 
-refer = r'^(?P<strnum>\d+) +(?P<valname>[a-zA-Z][a-zA-Z0-9]{0,15}) +\= +\-?((?P<lit1>[a-zA-Z][a-zA-Z0-9]{0,15})|[1-9][0-9]*)( +(\+|\-|\*|\/) +\-?(([a-zA-Z][a-zA-Z0-9]{0,15})|[1-9][0-9]*))*$'
+refer = r'^(?P<strnum>[1-9][0-9]*) +(?P<valname>[a-zA-Z][a-zA-Z0-9]{0,15}) +\= +(([a-zA-Z][a-zA-Z0-9]{0,15})|\-?[1-9][0-9]*)( +(\+|\-|\*|\/) +(([a-zA-Z][a-zA-Z0-9]{0,15})|\-?[1-9][0-9]*))*$'
 spref = r'\s[^a-zA-Z]+[^a-zA-Z0-9]*'
 
 
@@ -16,28 +16,40 @@ def checkFILE():
     resf = open('resSTR.txt', 'w')
     ftime = open('timeREG.txt', 'w')
     time_start = time.perf_counter()
-    numline = 1
+    dict_val = {}
+    numline = 0
     for line in f.readlines():
-        res = 1
+        numline += 1
+        here = True
         match = re.fullmatch(refer, line.rstrip())
-        gr = re.split(spref, line.rstrip())
         if match:
+            # print(numline, ' ', match.group('strnum'))
+            res = 0
+            gr = re.split(spref, line.rstrip())
+            if gr[-1] == '':
+                gr = gr[:-1]
             # print(gr)
-            if match.group('lit1'):
-                if match.group('valname') != match.group('lit1'):
-                    continue
+            # print(gr[1:-1])
+            # print(gr[-1])
             for ind in gr[1:]:
-                if match.group('valname') == ind:
-                    res += 1
-                else:
+                if dict_val.get(ind) is None:
+                    here = False
                     continue
+                else:
+                    dict_val[ind] = numline
+            if not here:
+                continue
+            dict_val[match.group('valname')] = numline
+            # print(dict_val)
+            for val in dict_val:
+                if dict_val.get(val) == numline:
+                    res += 1
+            # print(match.group('strnum') + ':' + str(res))
             resf.write(match.group('strnum') + ' : ' + str(res) + '\n')
         if numline % 10000 == 0:
-            print(numline)
+            # print(numline)
             ftime.write(str(time.perf_counter() - time_start) + '\n')
-        numline += 1
-            # print(match.group('strnum') + ' : ' + str(res))
-            # print(match.group('valname') + ' : ' + str(res))
+    print('***File was checked by RegExpr***')
     ftime.close()
     f.close()
     resf.close()
@@ -48,8 +60,8 @@ def checkREGstr(strch):
     match = re.fullmatch(refer, strch.rstrip())
     gr = re.split(spref, strch.rstrip())
     if match:
-        #print(match)
-        #print(gr)
+        # print(match)
+        # print(gr)
         if match.group('lit1'):
             if match.group('valname') != match.group('lit1'):
                 return 'Unacceptable'
